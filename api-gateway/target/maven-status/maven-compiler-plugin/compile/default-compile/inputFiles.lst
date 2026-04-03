@@ -1,1 +1,4 @@
 D:\escritorio\U\SEMESTRE 8\Sistemas Distribuidos\CORTE 1\Proyecto\FarmaExpres_Backend\api-gateway\src\main\java\co\edu\corhuila\api_gateway\ApiGatewayApplication.java
+D:\escritorio\U\SEMESTRE 8\Sistemas Distribuidos\CORTE 1\Proyecto\FarmaExpres_Backend\api-gateway\src\main\java\co\edu\corhuila\api_gateway\Config\SecurityConfig.java
+D:\escritorio\U\SEMESTRE 8\Sistemas Distribuidos\CORTE 1\Proyecto\FarmaExpres_Backend\api-gateway\src\main\java\co\edu\corhuila\api_gateway\exception\GlobalExceptionHandler.java
+D:\escritorio\U\SEMESTRE 8\Sistemas Distribuidos\CORTE 1\Proyecto\FarmaExpres_Backend\api-gateway\src\main\java\co\edu\corhuila\api_gateway\StatusController.java
