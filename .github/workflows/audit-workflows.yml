@@ -1,0 +1,54 @@
+name: Audit workflow changes
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/**"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan workflow changes for dangerous commands
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Compare against the PR base to only scan changed workflow files.
+          base_ref="${{ github.event.pull_request.base.sha }}"
+          head_ref="${{ github.sha }}"
+
+          changed_files=$(git diff --name-only "$base_ref" "$head_ref" -- .github/workflows/)
+          if [ -z "$changed_files" ]; then
+            echo "No workflow changes detected."
+            exit 0
+          fi
+
+          echo "Scanning changed workflow files:"$'\n'$changed_files
+
+          # Simple denylist for obvious dangerous API deletion commands.
+          # Extend this list as needed for your environment.
+          denylist_regex='(curl|wget)[^\n]*api\.github\.com[^\n]*/(delete|remove|repos/[^\s]+/[^\s]+)$|\bgh\s+api\b[^\n]*\bDELETE\b|\bgh\s+repo\s+delete\b|\baz\s+rest\b[^\n]*--method\s+delete|\baws\s+[^\n]*delete-'
+
+          fail=0
+          while IFS= read -r file; do
+            if grep -nE "$denylist_regex" "$file"; then
+              echo "Dangerous command detected in $file"
+              fail=1
+            fi
+          done <<< "$changed_files"
+
+          if [ "$fail" -ne 0 ]; then
+            echo "Audit failed: dangerous commands detected in workflow changes."
+            exit 1
+          fi
+
+          echo "Audit passed: no dangerous commands detected."
